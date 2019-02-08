@@ -135,7 +135,8 @@ namespace MvcMovie.Controllers
                 mov.Title = movie.Title;
                 mov.ReleaseDate = movie.ReleaseDate;
                 mov.Price = movie.Price;
-               
+
+                return RedirectToAction("Index");
             }
             return View(movie);
         }
