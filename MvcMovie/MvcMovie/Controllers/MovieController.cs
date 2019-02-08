@@ -24,13 +24,13 @@ namespace MvcMovie.Controllers
 
 
         // GET: Movie
-      /*  public ActionResult Index()
-        {
+        /*  public ActionResult Index()
+          {
 
-            return View(movies);
-        }
-        */
-
+              return View(movies);
+          }
+          */
+        /*
         public ActionResult Index(string searchString)
         {
 
@@ -45,6 +45,29 @@ namespace MvcMovie.Controllers
             }
             
             return View(movies);
+        }
+        */
+
+        public ActionResult Index(string movieGenre, string searchString)
+        {
+            List<Movie> result = movies;
+            List<String> genres = movies.Select(m => m.Genre).Distinct().ToList();
+
+            ViewBag.movieGenre = new SelectList(genres);
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                result = movies.FindAll(movie => movie.Title.Contains(searchString));
+                //return View(result);
+            }
+
+            if (!String.IsNullOrEmpty(movieGenre))
+            {
+                result = result.FindAll(movie => movie.Genre == movieGenre);
+                //return View(result);
+            }
+
+            return View(result);
         }
 
         // GET: Movie/Details/5
