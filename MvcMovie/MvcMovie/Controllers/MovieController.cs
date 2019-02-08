@@ -12,7 +12,7 @@ namespace MvcMovie.Controllers
 {
     public class MovieController : Controller
     {
-        private Movie[] movies = new Movie[]
+        public static List<Movie> movies = new List<Movie>()
         {
 
         new Movie {ID=1,Title="film1",ReleaseDate=new DateTime(2019, 01, 31),Genre="genre1",Price=20},
@@ -36,10 +36,6 @@ namespace MvcMovie.Controllers
         
         public ActionResult Details(int id)
         {
-           /* if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }*/
             Movie movie = movies.ToList().Single(m => m.ID == id);
             if (movie == null)
             {
@@ -47,49 +43,25 @@ namespace MvcMovie.Controllers
             }
             return View(movie);
         }
-        
-  
 
 
-        // POST: Movie/Create
-        [System.Web.Http.HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,Title,ReleaseDate,Genre,Price")]Movie movie)
-        {
-            try
-            {
-                /*
-                int id = movies.Last().ID+1;
-                string title = movie.Title;
-                string genre = movie.Genre;
-                DateTime releaseDate = movie.ReleaseDate;
-                decimal price = movie.Price;
-                */
-                movies.ToList().Add(movie);
-                
 
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Movie/Edit/5
-        public ActionResult Edit(int id)
+        // GET: Movie/Create
+        public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Movie/Edit/5
-        [System.Web.Http.HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
+
+        // POST: Movie/Create
+        [System.Web.Mvc.HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create([Bind(Include = "ID,Title,ReleaseDate,Genre,Price")]Movie movie)
+         {
+             try
+             {
+
+                movies.Add(movie);
 
                 return RedirectToAction("Index");
             }
@@ -98,6 +70,38 @@ namespace MvcMovie.Controllers
                 return View();
             }
         }
+
+
+        // GET: Movie/Edit/5
+        public ActionResult Edit(int id)
+        {
+            
+            Movie movie = movies.Single(m => m.ID == id);
+  
+            return View(movie);
+        }
+
+
+
+        // POST: /Movies/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [System.Web.Mvc.HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit([Bind(Include = "ID,Title,ReleaseDate,Genre,Price")] Movie movie)
+        {
+            if (ModelState.IsValid)
+            {
+                
+                Movie mov = movies.First(m => m.ID == movie.ID);
+                mov.Title = movie.Title;
+                mov.ReleaseDate = movie.ReleaseDate;
+                mov.Price = movie.Price;
+               
+            }
+            return View(movie);
+        }
+
 
         // GET: Movie/Delete/5
         public ActionResult Delete(int id)
@@ -106,7 +110,7 @@ namespace MvcMovie.Controllers
         }
 
         // POST: Movie/Delete/5
-        [System.Web.Http.HttpPost]
+        [System.Web.Mvc.HttpPost]
         public ActionResult Delete(int id, FormCollection collection)
         {
             try
