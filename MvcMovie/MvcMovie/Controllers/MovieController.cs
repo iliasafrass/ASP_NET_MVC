@@ -24,16 +24,31 @@ namespace MvcMovie.Controllers
 
 
         // GET: Movie
-        public ActionResult Index()
+      /*  public ActionResult Index()
         {
 
             return View(movies);
         }
-        
+        */
 
+        public ActionResult Index(string searchString)
+        {
+
+            List<Movie> moviesSearch = new List<Movie>();
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                var moviesList = from m in movies
+                               where m.Title.Contains(searchString)
+                               select m;
+                moviesSearch = moviesList.ToList();
+                return View(moviesSearch);
+            }
+            
+            return View(movies);
+        }
 
         // GET: Movie/Details/5
-        
+
         public ActionResult Details(int id)
         {
             Movie movie = movies.ToList().Single(m => m.ID == id);
@@ -104,18 +119,30 @@ namespace MvcMovie.Controllers
 
 
         // GET: Movie/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Movie movie = movies.Single(m => m.ID == id);
+            if (movie == null)
+            {
+                return HttpNotFound();
+            }
+            return View(movie);
         }
 
+
         // POST: Movie/Delete/5
-        [System.Web.Mvc.HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        [System.Web.Mvc.HttpPost, System.Web.Mvc.ActionName("Delete")]
+        public ActionResult Delete(int id)
         {
             try
             {
                 // TODO: Add delete logic here
+                Movie movie = movies.Single(m => m.ID == id);
+                movies.Remove(movie);
 
                 return RedirectToAction("Index");
             }
@@ -124,5 +151,8 @@ namespace MvcMovie.Controllers
                 return View();
             }
         }
+
+
+
     }
 }
